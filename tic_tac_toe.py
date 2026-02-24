@@ -1,3 +1,4 @@
+from classes import Board
 import random
 
 class Player:
@@ -5,154 +6,118 @@ class Player:
         self.name = name
         self.symbol = symbol
 
+    def get_move(self, board):
+        while True:
+            try:
+                move = input(f"{self}, enter your move (row col): ")
+                row, col = map(int, move.split())
+                if 0 <= row < board.height and 0 <= col < board.width:
+                    return row, col
+                else:
+                    print("Invalid move. Please enter row and column within the board dimensions.")
+            except ValueError:
+                print("Invalid input. Please enter row and column as integers separated by a space.")
+
+
     def __str__(self):
         return f"{self.name} ({self.symbol})"
+
+
+class AIPlayer(Player):
+    def __init__(self, symbol, opponent):
+        super().__init__(f"AI", symbol)
+        self.opponent = opponent
+
+    def get_move(self, board):
+        best_score = float('-inf')
+        best_move = None
+        alpha = float('-inf')
+        beta = float('inf')
+        for row, col in board.get_empty_cells():
+            board.make_move(row, col, self)
+            score = self.minimax(board, depth=5, alpha=alpha, beta=beta, maximizing_player=False)
+            board.undo_last_move(row, col)
+            if score > best_score:
+                best_score = score
+                best_move = (row, col)
+            alpha = max(alpha, best_score)
+        return best_move
     
-
-class Cell:
-    def __init__(self):
-        self.value = None
-
-    def is_empty(self):
-        return self.value is None
-    
-    def set_value(self, player):
-        self.value = player
-
-    def __str__(self):
-        return self.value.symbol if self.value else ' '
-    
-
-class Board:
-    def __init__(self, width=3, height=3, win_condition=3):
-        if height < win_condition or width < win_condition:
-            raise ValueError("Board dimensions must be greater than or equal to the win condition.")
-        self.width = width
-        self.height = height
-        self.win_condition = win_condition
-        self.board = [[Cell() for _ in range(self.width)] for _ in range(self.height)]
-        self.winner = None
-        self.move_count = 0
-
-    def make_move(self, row, col, player):
-        if self.board[row][col].is_empty() and self.winner is None:
-            self.board[row][col].set_value(player)
-            self.move_count += 1
-
-            show_board.show(self)
-            self.check_winner(player)
-            return True
-        
-        return False
-    
-    def _check_rows(self, player):
-        for row in self.board:
-            count = 0
-            for cell in row:
-                if cell.value == player:
-                    count += 1
-                    if count == self.win_condition:
-                        return True
-                else:
-                    count = 0
-        return False
-    
-    def _check_columns(self, player):
-        for c in range(self.width):
-            count = 0
-            for r in range(self.height):
-                if self.board[r][c].value == player:
-                    count += 1
-                    if count == self.win_condition:
-                        return True
-                else:
-                    count = 0
-        return False
-    
-    def _check_diagonal(self, player, r, c):
-        cur_r, cur_c = r, c
-        count = 0
-        while cur_r < self.height and cur_c < self.width:
-            if self.board[cur_r][cur_c].value == player:
-                count += 1
-                if count == self.win_condition:
-                    return True
-            else:
-                count = 0
-            cur_r += 1
-            cur_c += 1
-
-        cur_r, cur_c = r, c
-        count = 0
-        while cur_r < self.height and cur_c >= 0:
-            if self.board[cur_r][cur_c].value == player:
-                count += 1
-                if count == self.win_condition:
-                    return True
-            else:
-                count = 0
-            cur_r += 1
-            cur_c -= 1
-        return False
-    
-    def _check_diagonals(self, player):
-        for c in range(self.width):
-            if self._check_diagonal(player, 0, c):
-                return True
-        
-        for r in range(1, self.height):
-            if self._check_diagonal(player, r, 0) \
-                or self._check_diagonal(player, r, self.width - 1):
-                return True
-        
-        return False
-
-    def check_winner(self, player):
-        if self._check_rows(player) or self._check_columns(player) \
-            or self._check_diagonals(player):
-            self.winner = player
-            print(f"{player} wins!")
-            return True
-        
-        if self.move_count == self.width * self.height:
-            print("It's a draw!")
-            self.winner = ""
-            return True
-        
-        return False
-    
-
-class show_board:
-    @staticmethod
-    def show(board):
-        result = ""
+    def evaluate(self, board):
+        sum_evaluation = 0
         for row in board.board:
+            for cell in row:
+                if cell.value == self:
+                    sum_evaluation += cell.evaluation
+                elif cell.value is not None:
+                    sum_evaluation -= cell.evaluation
+        return sum_evaluation
+    
+    def minimax(self, board, depth, alpha, beta, maximizing_player):
+        if board.is_game_over():
+            if board.get_winner() == self:
+                return 100000 - depth
+            elif board.get_winner() is None:
+                return 0
+            else:
+                return -100000 + depth
+            
+        if depth == 0:
+            return self.evaluate(board)
+        
+        if maximizing_player:
+            max_eval = float('-inf')
+            for row, col in board.get_empty_cells():
+                board.make_move(row, col, self)
+                eval = self.minimax(board, depth - 1, alpha, beta, False)
+                board.undo_last_move(row, col)
+                max_eval = max(max_eval, eval)
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    break
+            return max_eval
+        else:
+            min_eval = float('inf')
+            for row, col in board.get_empty_cells():
+                board.make_move(row, col, self.opponent)
+                eval = self.minimax(board, depth - 1, alpha, beta, True)
+                board.undo_last_move(row, col)
+                min_eval = min(min_eval, eval)
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    break
+            return min_eval
+
+
+class Game:
+    def __init__(self, player1, player2, width=3, height=3, win_condition=3):
+        self.player1 = player1
+        self.player2 = player2
+        self.board = Board(width, height, win_condition)
+        self.current_player = player1
+
+    def run(self):
+        while self.board.get_winner() is None and not self.board.is_draw:
+            row, col = self.current_player.get_move(self.board)
+            if self.board.make_move(row, col, self.current_player):
+                self.current_player = self.player2 if self.current_player == self.player1 else self.player1
+                self.show()
+            else:
+                print("Invalid move. Try again.")
+        if self.board.is_draw:
+            print("Game over! It's a draw.")
+        else:
+            print(f"Game over! Winner: {self.board.get_winner()}")
+
+    def show(self):
+        result = ""
+        for row in self.board.board:
             result += " | ".join(str(cell) for cell in row) + "\n"
         print(result)
-    
+
 
 if __name__ == "__main__":
     player1 = Player("Alice", "X")
-    player2 = Player("Bob", "O")
-    board = Board()
-
-    moves = [(r, c) for r in range(board.height) for c in range(board.width)]
-    random.shuffle(moves)
-
-    winner = None
-    while winner is None:
-        row, col = moves.pop()
-        board.make_move(row, col, player1)
-        winner = board.winner
-        if board.winner is not None:
-            break
-        row, col = moves.pop()
-        board.make_move(row, col, player2)
-        winner = board.winner
-        
-
-    # board.make_move(0, 2, player1)
-    # board.make_move(0, 1, player2)
-    # board.make_move(1, 1, player1)
-    # board.make_move(0, 0, player2)
-    # board.make_move(2, 0, player1)
+    ai_player = AIPlayer("O", player1)
+    game = Game(ai_player, player1, 6, 6, 4)
+    game.run()
