@@ -1,5 +1,5 @@
-from classes import Board
-import random
+from ttt_board import Board
+
 
 class Player:
     def __init__(self, name, symbol):
