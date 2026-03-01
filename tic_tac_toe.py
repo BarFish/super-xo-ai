@@ -56,11 +56,11 @@ class AIPlayer(Player):
     def minimax(self, board, depth, alpha, beta, maximizing_player):
         if board.is_game_over():
             if board.get_winner() == self:
-                return 100000 - depth
+                return 100000 + depth
             elif board.get_winner() is None:
                 return 0
             else:
-                return -100000 + depth
+                return -100000 - depth
             
         if depth == 0:
             return self.evaluate(board)
@@ -111,13 +111,19 @@ class Game:
 
     def show(self):
         result = ""
+        for i in range(self.board.width):
+            result += f"   {i}"
+        result += "\n"
+        r = 0
         for row in self.board.board:
-            result += " | ".join(str(cell) for cell in row) + "\n"
+            result += f"{r}| "
+            result += " | ".join(str(cell) for cell in row) + " |\n"
+            r += 1
         print(result)
 
 
 if __name__ == "__main__":
-    player1 = Player("Alice", "X")
-    ai_player = AIPlayer("O", player1)
+    player1 = Player("Ron", "O")
+    ai_player = AIPlayer("X", player1)
     game = Game(ai_player, player1, 6, 6, 4)
     game.run()
