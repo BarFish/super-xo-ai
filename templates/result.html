@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game Over</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="result-body">
+
+  <div id="game-root"
+    data-game-id="{{ game_id }}"
+    data-player-role="{{ player_role }}">
+  </div>
+
+  <div class="result-container">
+
+    <!-- Animated trophy/icon -->
+    <div class="result-icon" id="result-icon">🏆</div>
+
+    <h1 class="result-title" id="result-title">GAME OVER</h1>
+    <p class="result-winner" id="result-winner">Loading...</p>
+    <p class="result-reason" id="result-reason"></p>
+
+    <!-- Final Stats Table -->
+    <div class="stats-table">
+      <div class="stats-header">SESSION STATS</div>
+      <div class="stats-row">
+        <div class="stats-cell header">Player</div>
+        <div class="stats-cell header">Wins</div>
+        <div class="stats-cell header">Losses</div>
+        <div class="stats-cell header">Draws</div>
+      </div>
+      <div class="stats-row" id="stats-p1-row">
+        <div class="stats-cell" id="stats-p1-name">-</div>
+        <div class="stats-cell" id="stats-p1-wins">0</div>
+        <div class="stats-cell" id="stats-p1-losses">0</div>
+        <div class="stats-cell" id="stats-p1-draws">0</div>
+      </div>
+      <div class="stats-row" id="stats-p2-row">
+        <div class="stats-cell" id="stats-p2-name">-</div>
+        <div class="stats-cell" id="stats-p2-wins">0</div>
+        <div class="stats-cell" id="stats-p2-losses">0</div>
+        <div class="stats-cell" id="stats-p2-draws">0</div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="result-buttons">
+      <button id="restart-btn" class="result-btn restart-btn">REMATCH</button>
+      <a href="/" class="result-btn home-btn">HOME</a>
+    </div>
+
+  </div>
+
+  <!-- Confetti canvas (shown on win) -->
+  <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;pointer-events:none;"></canvas>
+
+  <script src="/static/js/result.js"></script>
+</body>
+</html>

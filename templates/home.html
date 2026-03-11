@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game Lobby</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="home-body">
+
+  <div class="home-container">
+    <header class="home-header">
+      <div class="logo-mark">◈</div>
+      <h1 class="game-title">GAME<br>ARCADE</h1>
+      <p class="subtitle">Classic board games, reimagined</p>
+    </header>
+
+    <form id="setup-form" class="setup-form">
+
+      <!-- Player Name -->
+      <div class="form-section">
+        <label class="form-label">YOUR NAME</label>
+        <input type="text" id="player-name" class="form-input" placeholder="Enter your name..." maxlength="20" required />
+      </div>
+
+      <!-- Game Selection -->
+      <div class="form-section">
+        <label class="form-label">GAME</label>
+        <div class="toggle-group" id="game-select">
+          <button type="button" class="toggle-btn active" data-value="TTT">Tic Tac Toe</button>
+          <button type="button" class="toggle-btn" data-value="C4">Connect Four</button>
+        </div>
+      </div>
+
+      <!-- Mode Selection -->
+      <div class="form-section">
+        <label class="form-label">MODE</label>
+        <div class="toggle-group" id="mode-select">
+          <button type="button" class="toggle-btn active" data-value="bot">vs Bot</button>
+          <button type="button" class="toggle-btn" data-value="local">2 Players</button>
+          <button type="button" class="toggle-btn" data-value="online">Online</button>
+        </div>
+      </div>
+
+      <!-- Player 2 Name (only shown for local mode) -->
+      <div class="form-section" id="p2-section" style="display:none;">
+        <label class="form-label">PLAYER 2 NAME</label>
+        <input type="text" id="player2-name" class="form-input" placeholder="Player 2 name..." maxlength="20" />
+      </div>
+
+      <!-- TTT Settings -->
+      <div id="ttt-settings" class="form-section ttt-settings">
+        <label class="form-label">TTT BOARD SIZE</label>
+        <div class="toggle-group" id="ttt-preset-select">
+          <button type="button" class="toggle-btn active" data-value="3x3">3×3 (classic)</button>
+          <button type="button" class="toggle-btn" data-value="6x6">6×6 (win 4)</button>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="play-btn" id="play-btn">
+        <span id="btn-text">PLAY</span>
+      </button>
+
+    </form>
+
+    <!-- Waiting for online match -->
+    <div id="waiting-screen" class="waiting-screen" style="display:none;">
+      <div class="waiting-spinner"></div>
+      <p class="waiting-text">Finding an opponent...</p>
+      <p class="waiting-sub">Share this game type with a friend on the same server!</p>
+      <button id="cancel-wait" class="cancel-btn">Cancel</button>
+    </div>
+
+  </div>
+
+  <script src="/static/js/home.js"></script>
+</body>
+</html>

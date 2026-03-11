@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="game-body">
+
+  <!-- Pass game info to JavaScript via data attributes -->
+  <div id="game-root"
+    data-game-id="{{ game_id }}"
+    data-player-role="{{ player_role }}">
+  </div>
+
+  <div class="game-layout">
+
+    <!-- Left Sidebar: Player Info + Stats -->
+    <aside class="sidebar sidebar-left">
+      <div class="player-card" id="p1-card">
+        <div class="player-symbol" id="p1-symbol">X</div>
+        <div class="player-info">
+          <div class="player-name" id="p1-name">Player 1</div>
+          <div class="player-stats">
+            <span class="stat"><span id="p1-wins">0</span>W</span>
+            <span class="stat"><span id="p1-losses">0</span>L</span>
+            <span class="stat"><span id="p1-draws">0</span>D</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vs-divider">VS</div>
+
+      <div class="player-card" id="p2-card">
+        <div class="player-symbol" id="p2-symbol">O</div>
+        <div class="player-info">
+          <div class="player-name" id="p2-name">Player 2</div>
+          <div class="player-stats">
+            <span class="stat"><span id="p2-wins">0</span>W</span>
+            <span class="stat"><span id="p2-losses">0</span>L</span>
+            <span class="stat"><span id="p2-draws">0</span>D</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center: Board + Status -->
+    <main class="game-main">
+      <div class="turn-indicator" id="turn-indicator">
+        <span id="turn-text">Loading...</span>
+      </div>
+
+      <!-- Timer bar -->
+      <div class="timer-container">
+        <div class="timer-bar" id="timer-bar"></div>
+        <span class="timer-text" id="timer-text">30</span>
+      </div>
+
+      <!-- The game board is rendered here by JavaScript -->
+      <div id="board-container" class="board-container">
+        <div class="loading-board">Loading board...</div>
+      </div>
+
+      <!-- Connect Four drag zone (shown above board) -->
+      <div id="c4-drag-zone" class="c4-drag-zone" style="display:none;">
+        <div id="c4-preview-piece" class="c4-piece preview-piece" style="display:none;"></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <button id="resign-btn" class="action-btn resign-btn">Resign</button>
+      </div>
+    </main>
+
+    <!-- Right Sidebar: Game info -->
+    <aside class="sidebar sidebar-right">
+      <div class="game-info-card">
+        <div class="info-label">GAME</div>
+        <div class="info-value" id="game-type-display">-</div>
+      </div>
+      <div class="game-info-card">
+        <div class="info-label">MODE</div>
+        <div class="info-value" id="mode-display">-</div>
+      </div>
+      <div class="game-info-card">
+        <div class="info-label">MOVE</div>
+        <div class="info-value" id="move-count">0</div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- AI Thinking Overlay -->
+  <div id="ai-overlay" class="ai-overlay" style="display:none;">
+    <div class="ai-thinking">
+      <div class="thinking-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <p>Bot is thinking...</p>
+    </div>
+  </div>
+
+  <script src="/static/js/game.js"></script>
+</body>
+</html>
